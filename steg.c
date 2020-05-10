@@ -195,6 +195,7 @@ int main(int argc, char const *argv[]) {
       // Allows for filename up to 200 chars
       outname = malloc(sizeof(char) * 200);
       scanf("%s", outname);
+      getchar();  // Remove extra \n
     }
   }
 
