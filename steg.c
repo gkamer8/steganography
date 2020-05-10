@@ -5,7 +5,13 @@
 void createSecret(unsigned char *message, int messageLength,
                   char *inFilename, char *outFilename) {
 
+
   FILE *image = fopen(inFilename, "rb");
+
+  if (image == NULL) {
+    printf("Could not open source image %s.\n", inFilename);
+    exit(1);
+  }
 
   unsigned char header[14];
   fread(header, sizeof(unsigned char), 14, image);  // read in the header
@@ -67,6 +73,11 @@ void readSecret(int messageLength, char* inFilename) {
   // Read message
 
   FILE *readImage = fopen(inFilename, "rb");
+
+  if (readImage == NULL) {
+    printf("Could not open source image %s.\n", inFilename);
+    exit(1);
+  }
 
   // Get offset
   unsigned char headerRead[14];
