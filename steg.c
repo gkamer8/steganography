@@ -230,18 +230,27 @@ int main(int argc, char const *argv[]) {
     int messageLength = j;
 
     createSecret(message, messageLength, fname, outname);
+
+    free(message);
+    free(outname);
   }
   else if (read == 1) {
     readSecret(readLength, fname);
   }
   else if (writeFromFile == 1) {
     printf("Write from file not implemented.\n");
+
+    free(text);
+    free(outname);
+
     exit(0);
   }
   else {
     printf("Error\n");
     exit(1);
   }
+
+  free(fname);
 
   return 0;
 }
