@@ -222,16 +222,18 @@ int main(int argc, char const *argv[]) {
 
     printf("Enter Secret Message:\n");
 
-    // ? add: && c != EOF
-    while (c != '\n') {
-      c = getc(stdin);
+    while (1) {
+      c = getchar();
 
-      if (c == '\n'){
+      if (c == '\n' || c == EOF){
         break;
       }
 
-      // Re-allocate memory
-      message = (unsigned char*)realloc(message, j * sizeof(unsigned char));
+      // Re-allocate memory every one hundred chars
+      if ((j - 1) % 100 == 0) {
+        int newSize = (j * 100) * sizeof(unsigned char);
+        message = (unsigned char*)realloc(message, newSize);
+      }
       message[i] = c;
 
       i++;
