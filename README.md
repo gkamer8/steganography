@@ -12,5 +12,5 @@ Here is an example call of the program that reads a message of at most 500 chara
 
 ## Organization
 
-The code is completely contained in the steg.c file, where two functions (createSecret and readSecret) hand writing and reading encrypted messages, respectively.
+The code is completely contained in the steg.c file, where two functions (createSecret and readSecret) handle writing and reading encrypted messages, respectively.
 
