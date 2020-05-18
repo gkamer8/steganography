@@ -3,7 +3,7 @@
 #include <string.h>
 
 void createSecret(unsigned char *message, int messageLength, char *inFilename,
-					char *outFilename) {
+					char *outFilename, int builtInOffset) {
 
     // Image to read from
     FILE *image = fopen(inFilename, "rb");
@@ -30,33 +30,37 @@ void createSecret(unsigned char *message, int messageLength, char *inFilename,
 
     fclose(image);
 
-    //int messageLength = sizeof(message)/sizeof(unsigned char);
-
     // Encode message
     for (int i = 0; i < (messageLength * 4); i++) {
 
 		int character = i / 4;
         int bitPairNum = i % 4;
 
-        unsigned char messageByte;
+    	unsigned char messageByte;
 
-       switch (bitPairNum) {
-            case 0:
-                messageByte = (message[character] & 0b11000000) >> 6;
-                break;
-            case 1:
-                messageByte = (message[character] & 0b00110000) >> 4;
-                break;
-            case 2:
-                messageByte = (message[character] & 0b00001100) >> 2;
-                break;
-            case 3:
-                messageByte = (message[character] & 0b00000011) >> 0;
-                break;
-        }
+		switch (bitPairNum) {
+	        case 0:
+	            messageByte = (message[character] & 0b11000000) >> 6;
+	            break;
+	        case 1:
+	            messageByte = (message[character] & 0b00110000) >> 4;
+	            break;
+	        case 2:
+	            messageByte = (message[character] & 0b00001100) >> 2;
+	            break;
+	        case 3:
+	            messageByte = (message[character] & 0b00000011) >> 0;
+	            break;
+		}
 
-		imageData[i] = (imageData[i] & 0b11111100) | messageByte;
+		int insert = i + (builtInOffset * 4);
 
+		if (insert >= size - offset) {
+			printf("Max file size reached. Encoding incomplete.\n");
+			exit(1);
+		}
+
+		imageData[insert] = (imageData[insert] & 0b11111100) | messageByte;
     }
 
     // Write out file
@@ -67,6 +71,9 @@ void createSecret(unsigned char *message, int messageLength, char *inFilename,
     fwrite(imageData, 1, size - offset, outImage);
 
     fclose(outImage);
+
+	printf("Encoding successful.\n");
+
 }
 
 void readSecret(int messageLength, char* inFilename) {
@@ -115,12 +122,14 @@ void readSecret(int messageLength, char* inFilename) {
 			// on last two bits, add to unencoded
             unencoded[character] = nextChar;
         }
+
     }
 
 	// Add a \0 at the end of the array in case there is none
-	unencoded[messageLength + 1] = '\0';
 
-    printf("Secret message: \n%s\n", unencoded);
+	unencoded[messageLength] = '\0';
+
+	printf("Secret message: \n%s\n", unencoded);
 
 }
 
@@ -249,7 +258,7 @@ int main(int argc, char const *argv[]) {
 
         int messageLength = j;
 
-        createSecret(message, messageLength, fname, outname);
+        createSecret(message, messageLength, fname, outname, 0);
 
         free(message);
         free(outname);
@@ -259,9 +268,6 @@ int main(int argc, char const *argv[]) {
     }
     else if (writeFromFile == 1) {
 
-	    unsigned char *readText =
-			(unsigned char*)malloc(sizeof(unsigned char));
-
 		FILE *textFile = fopen(text, "r");
 
 		if (textFile == NULL){
@@ -269,26 +275,40 @@ int main(int argc, char const *argv[]) {
 			return 1;
 		}
 
+		// Data is dumped into the new file every MAX_LOAD characters
+		const int MAX_LOAD = 10000;
+
+		unsigned char *readText =
+			(unsigned char*)malloc(sizeof(unsigned char) * MAX_LOAD);
+
 		unsigned char inChar;
 		int j = 0;
+		int finalOffset = 0;
 		while (1) {
 			inChar = getc(textFile);
 			if ((signed char)inChar == EOF) {
 				break;
 			}
 
-			// Re-allocate memory every one thousand chars
-            if (j % 1000 == 0) {
-                int newSize = ((j + 1) * 1000) * sizeof(unsigned char);
-                readText = (unsigned char*)realloc(readText, newSize);
-            }
-            readText[j] = inChar;
+			readText[j % MAX_LOAD] = inChar;
+
+			// Dump data into file every ten thousand chars (offset by 1)
+			if ((j + 1) % MAX_LOAD == 0) {
+				createSecret(readText, MAX_LOAD, fname, outname, finalOffset);
+				fname = outname;
+
+				// Clear memory
+                memset(readText, 0, MAX_LOAD);
+
+				finalOffset += MAX_LOAD;
+			}
 
             j++;
 		}
 
-		createSecret(readText, j + 1, fname, outname);
+		createSecret(readText, j - finalOffset, fname, outname, finalOffset);
 
+		free(readText);
         free(text);
         free(outname);
 
