@@ -93,7 +93,7 @@ void readSecret(int messageLength, char* inFilename) {
 
     fclose(readImage);
 
-    unsigned char unencoded[messageLength];  // for storing message
+    unsigned char unencoded[messageLength + 1];  // for storing message
 
     unsigned char nextChar;  // for storing each character during construction
     for (int i = 0; i < (messageLength * 4); i++) {
@@ -117,6 +117,9 @@ void readSecret(int messageLength, char* inFilename) {
         }
     }
 
+	// Add a \0 at the end of the array in case there is none
+	unencoded[messageLength + 1] = '\0';
+
     printf("Secret message: \n%s\n", unencoded);
 
 }
@@ -125,7 +128,7 @@ int main(int argc, char const *argv[]) {
 
     char usageStatement[200];
     sprintf(usageStatement,
-        "usage: %s infile [-r length] [-w outfile] [-wf outfile textfile]\n",
+        "usage: %s infile [-r length] [-w outfile] [-f outfile textfile]\n",
         argv[0]);
 
     // Parse arguments
@@ -163,7 +166,7 @@ int main(int argc, char const *argv[]) {
             }
             i++;
         }
-        else if (strcmp(argv[i], "-wf") == 0) {
+        else if (strcmp(argv[i], "-f") == 0) {
           writeFromFile = 1;
           if (i + 2 <= argc - 1) {
               outname = malloc(sizeof(argv[i + 1]));
@@ -270,6 +273,9 @@ int main(int argc, char const *argv[]) {
 		int j = 0;
 		while (1) {
 			inChar = getc(textFile);
+			if ((signed char)inChar == EOF) {
+				break;
+			}
 
 			// Re-allocate memory every one thousand chars
             if (j % 1000 == 0) {
