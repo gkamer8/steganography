@@ -203,7 +203,7 @@ int main(int argc, char const *argv[]) {
 
     // If no option was selected in the command line, ask
     if (read == 0 && write == 0 && writeFromFile == 0) {
-        char choice;
+        char choice = '_';
         printf("Read message (r) or encode message (e)?\n");
         while (choice != 'r' && choice != 'e') {
             choice = getchar();
@@ -225,7 +225,7 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    if (write == 1) {
+    if (write) {
 
         // Allow user to write message
 
@@ -262,10 +262,10 @@ int main(int argc, char const *argv[]) {
         free(message);
         free(outname);
     }
-    else if (read == 1) {
+    else if (read) {
         readSecret(readLength, fname);
     }
-    else if (writeFromFile == 1) {
+    else if (writeFromFile) {
 
 		FILE *textFile = fopen(text, "r");
 
@@ -311,7 +311,6 @@ int main(int argc, char const *argv[]) {
         free(text);
         free(outname);
 
-        exit(0);
     }
     else {
         printf("Error\n");
