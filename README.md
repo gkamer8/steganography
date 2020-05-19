@@ -17,7 +17,7 @@ The code is completely contained in the steg.c file, where two functions (create
 
 ## Examples
 
-Example files are in the examples folder. The file alice.txt contains the entire text of Alice in Wonderland, which is encoded in the least significant bits of alice.bmp. The alice.bmp file is nearly visually identical to pic.bmp, which is a picture of Leverett House at Harvard College.
+Example files are in the examples folder. The file alice.txt contains the entire text of Alice in Wonderland, which is encoded in the least significant bits of alice.bmp. The alice.bmp file is nearly visually identical to pic.bmp, which is a picture of Leverett House at Harvard.
 
 Here is an example call of the program that reads Alice in Wonderland from alice.bmp: `./steg alice.bmp -r 148573`. Nothing terrible happens if the length is off, but it is cleaner to use the exact number.
 
