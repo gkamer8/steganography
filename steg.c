@@ -79,7 +79,6 @@ void createSecret(unsigned char *message, int messageLength, char *inFilename,
 void readSecret(int messageLength, char* inFilename) {
 
     // Read message
-
     FILE *readImage = fopen(inFilename, "rb");
 
     if (readImage == NULL) {
