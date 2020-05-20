@@ -1,6 +1,6 @@
 # Steganography Tool
 
-This is a command line application I've written to help me learn C. It hide messages in images using least significant (two) bit steganography. Presently, the program works on Windows Bitmap images and does not automatically encrypt messages.
+This is a command line application I've written to help me learn C. It hide messages in images using least significant (two) bit steganography. Presently, the program works on Windows Bitmap images and does not automatically encrypt messages. It is inspired by [this](https://www.youtube.com/watch?v=TWEXCYQKyDc&t=290s) video on Computerphile.
 
 ## Usage
 

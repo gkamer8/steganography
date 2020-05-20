@@ -203,7 +203,7 @@ int main(int argc, char const *argv[]) {
 
     // If no option was selected in the command line, ask
     if (read == 0 && write == 0 && writeFromFile == 0) {
-        char choice = '_';
+        char choice = '_';  // Doesn't work if empty in certain compilers
         printf("Read message (r) or encode message (e)?\n");
         while (choice != 'r' && choice != 'e') {
             choice = getchar();
